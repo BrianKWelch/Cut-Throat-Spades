@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cut-Throat Spades Scoring</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #2E2E2E;
+            color: white;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #1B1B1B;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+        }
+        input {
+            background-color: #444;
+            color: white;
+            text-align: center;
+        }
+        button {
+            background-color: #FFD700;
+            color: black;
+            cursor: pointer;
+            border: 2px solid red;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: black;
+            color: white;
+        }
+        th, td {
+            border: 1px solid white;
+            padding: 10px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 28px;
+            color: red;
+        }
+        .spades-symbol {
+            font-size: 32px;
+            color: #FFD700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>♠ Cut-Throat Spades Scoring App ♠</h1>
+        <p>Created by Brian Welch</p>
+        <label>Amount Per Point: <input type="number" id="amountPerPoint" value="0.05" step="0.01"></label>
+        <table>
+            <thead>
+                <tr>
+                    <th>Position</th>
+                    <th>Player Name</th>
+                    <th>Final Score</th>
+                    <th>Total Owed</th>
+                    <th>Total Won</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1st</td>
+                    <td><input type="text" id="player1"></td>
+                    <td><input type="number" id="score1"></td>
+                    <td id="owed1">$0.00</td>
+                    <td id="won1">$0.00</td>
+                </tr>
+                <tr>
+                    <td>2nd</td>
+                    <td><input type="text" id="player2"></td>
+                    <td><input type="number" id="score2"></td>
+                    <td id="owed2">$0.00</td>
+                    <td id="won2">$0.00</td>
+                </tr>
+                <tr>
+                    <td>3rd</td>
+                    <td><input type="text" id="player3"></td>
+                    <td><input type="number" id="score3"></td>
+                    <td id="owed3">$0.00</td>
+                    <td id="won3">$0.00</td>
+                </tr>
+                <tr>
+                    <td>4th</td>
+                    <td><input type="text" id="player4"></td>
+                    <td><input type="number" id="score4"></td>
+                    <td id="owed4">$0.00</td>
+                    <td id="won4">$0.00</td>
+                </tr>
+            </tbody>
+        </table>
+        <button onclick="calculateScores()">Calculate</button>
+        <h3 class="spades-symbol">♠ Payments Due ♠</h3>
+        <p id="payments"></p>
+    </div>
+    <script>
+        function calculateScores() {
+            let amountPerPoint = parseFloat(document.getElementById("amountPerPoint").value);
+            let scores = [
+                parseInt(document.getElementById("score1").value) || 0,
+                parseInt(document.getElementById("score2").value) || 0,
+                parseInt(document.getElementById("score3").value) || 0,
+                parseInt(document.getElementById("score4").value) || 0
+            ];
+            
+            let players = [
+                document.getElementById("player1").value,
+                document.getElementById("player2").value,
+                document.getElementById("player3").value,
+                document.getElementById("player4").value
+            ];
+            
+            let payments = "";
+            let owed = [0, 0, 0, 0];
+            let won = [0, 0, 0, 0];
+            
+            for (let i = 1; i < scores.length; i++) {
+                for (let j = 0; j < i; j++) {
+                    let amount = (Math.abs(Math.min(scores[i], 0)) * amountPerPoint * 2) + (Math.max(scores[j] - Math.max(scores[i], 0), 0) * amountPerPoint);
+                    owed[i] += amount;
+                    won[j] += amount;
+                    payments += `${players[i]} owes ${players[j]} $${amount.toFixed(2)}<br>`;
+                }
+            }
+            
+            for (let i = 1; i < scores.length; i++) {
+                document.getElementById(`owed${i+1}`).innerText = `$${owed[i].toFixed(2)}`;
+            }
+            for (let i = 0; i < scores.length; i++) {
+                document.getElementById(`won${i+1}`).innerText = `$${won[i].toFixed(2)}`;
+            }
+            
+            document.getElementById("payments").innerHTML = payments;
+        }
+    </script>
+</body>
+</html>
